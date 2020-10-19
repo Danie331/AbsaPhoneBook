@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using Absa.Services.Core;
+using Absa.Services.Specification;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Absa.Services
 {
-    class DependencyMapper
+    public static class DependencyMapper
     {
+        public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<IPhoneBookService, PhoneBookService>();
+
+            Repo.DependencyMapper.RegisterRepo(services, configuration);
+        }
     }
 }
