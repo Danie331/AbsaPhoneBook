@@ -1,5 +1,6 @@
 ﻿
 using Absa.Models;
+using Absa.Models.Exceptions;
 using Absa.Repo.DbContext;
 using Absa.Repo.Specification;
 using AutoMapper;
@@ -39,7 +40,7 @@ namespace Absa.Repo.Core
             catch (Exception ex)
             {
                 // Log ex
-                throw;
+                throw new DatastoreException("Exception in data access layer", ex);
             }
         }
 
@@ -61,7 +62,7 @@ namespace Absa.Repo.Core
             catch (Exception ex)
             {
                 // Log ex
-                throw;
+                throw new DatastoreException("Exception in data access layer", ex);
             }
         }
 
@@ -74,14 +75,16 @@ namespace Absa.Repo.Core
                 if (filter == null)
                 {
                     results = await ctx.Contact.Where(c => c.FirstName.ToLower().Contains(searchName.ToLower()) || c.LastName.ToLower().Contains(searchName.ToLower()))
+                                               .Include(c => c.ContactNumber)
                                                .AsNoTracking().ToListAsync();
                 }
                 else
                 {
                     results = await ctx.Contact.Where(c => c.FirstName.ToLower().Contains(searchName.ToLower()) || c.LastName.ToLower().Contains(searchName.ToLower()))
-                                                             .Skip(filter.SkipLength)
-                                                             .Take(filter.PageSize)
-                                                             .AsNoTracking().ToListAsync();
+                                               .Include(c => c.ContactNumber)
+                                               .Skip(filter.SkipLength)
+                                               .Take(filter.PageSize)
+                                               .AsNoTracking().ToListAsync();
                 }
 
                 return _mapper.Map<IEnumerable<Contact>>(results);
@@ -89,7 +92,7 @@ namespace Absa.Repo.Core
             catch (Exception ex)
             {
                 // Log ex
-                throw;
+                throw new DatastoreException("Exception in data access layer", ex);
             }
         }
 
@@ -99,23 +102,50 @@ namespace Absa.Repo.Core
             {
                 var ctx = await GetDataContext();
 
-                var results = await ctx.ContactNumber.Where(c => c.PhoneNumber.Contains(searchContactDetail)).AsNoTracking().ToListAsync();
+                var results = await ctx.ContactNumber.Where(c => c.PhoneNumber.Contains(searchContactDetail))
+                                                     .Include(c => c.Contact)
+                                                     .AsNoTracking().ToListAsync();
 
-                var contactIDs = results.Select(c => c.ContactId).ToList();
-                var targetContacts = await ctx.Contact.Where(c => contactIDs.Contains(c.Id)).AsNoTracking().ToListAsync();
-
-                return _mapper.Map<IEnumerable<Contact>>(targetContacts);
+                return _mapper.Map<IEnumerable<Contact>>(results.Select(c => c.Contact));
             }
             catch (Exception ex)
             {
                 // Log ex
-                throw;
+                throw new DatastoreException("Exception in data access layer", ex);
+            }
+        }
+
+        public async Task<IEnumerable<Contact>> GetAllAsync(PagingFilter filter = null)
+        {
+            try
+            {
+                var ctx = await GetDataContext();
+                IEnumerable<Data.Contact> records = null;
+                if (filter == null)
+                {
+                    records = await ctx.Contact.Include(c => c.ContactNumber)
+                                               .AsNoTracking().ToListAsync();
+                }
+                else
+                {
+                    records = await ctx.Contact.Include(c => c.ContactNumber)
+                                               .Skip(filter.SkipLength)
+                                               .Take(filter.PageSize)
+                                               .AsNoTracking().ToListAsync();
+                }
+
+                return _mapper.Map<IEnumerable<Contact>>(records);
+            }
+            catch (Exception ex)
+            {
+                // Log ex
+                throw new DatastoreException("Exception in data access layer", ex);
             }
         }
 
         private async Task<IPhoneBookContext> GetDataContext()
         {
-            var connection = _connection ?? (_connection = new Microsoft.Data.Sqlite.SqliteConnection("DataSource=:memory:"));
+            var connection = _connection ?? (_connection = new Microsoft.Data.Sqlite.SqliteConnection("DataSource='file::memory:?cache=shared'"));
             connection.Open();
             var options = new DbContextOptionsBuilder<PhoneBookDirectoryContext>().UseSqlite(connection).Options;
             using (var context = new PhoneBookDirectoryContext(options))
@@ -139,7 +169,7 @@ namespace Absa.Repo.Core
             catch (Exception ex)
             {
                 // Log ex
-                throw;
+                throw new DatastoreException("Exception in data access layer", ex);
             }
         }
 
@@ -156,7 +186,7 @@ namespace Absa.Repo.Core
             catch (Exception ex)
             {
                 // Log ex
-                throw;
+                throw new DatastoreException("Exception in data access layer", ex);
             }
         }
     }

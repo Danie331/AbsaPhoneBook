@@ -34,7 +34,7 @@ namespace Absa.Repo.DbContext
             modelBuilder.Entity<Contact>().HasData(
                         new Contact { Id = 1, FirstName = "Danie", LastName = "vd M" },
                         new Contact { Id = 2, FirstName = "Donald", LastName = "Duck" },
-                        new Contact { Id = 3, FirstName = "Mickey", LastName = "Mouse" });
+                        new Contact { Id = 3, FirstName = "Mickey", LastName = "Mouse" });                        
             modelBuilder.Entity<ContactNumber>().HasData(
                         new ContactNumber { Id = 1, ContactId = 1, PhoneNumber = "0724707471" },
                         new ContactNumber { Id = 2, ContactId = 1, PhoneNumber = "0769561578" },

@@ -10,5 +10,6 @@ namespace Absa.Repo.Specification
         Task<ContactDetail> AddAsync(int id, ContactDetail contactDetail);
         Task<IEnumerable<Contact>> FindContactsByNameAsync(string searchName, PagingFilter filter = null);
         Task<IEnumerable<Contact>> FindContactsByDetailAsync(string searchContactDetail, PagingFilter filter = null);
+        Task<IEnumerable<Contact>> GetAllAsync(PagingFilter filter = null);
     }
 }

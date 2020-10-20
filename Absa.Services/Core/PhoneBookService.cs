@@ -31,7 +31,7 @@ namespace Absa.Services.Core
                 return _store.FindContactsByDetailAsync(searchData.SearchNumber, filter);
             }
 
-            return Task.FromResult(Enumerable.Empty<Contact>());
+            return _store.GetAllAsync(filter);
         }
     }
 }

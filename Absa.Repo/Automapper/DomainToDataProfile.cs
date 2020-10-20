@@ -10,7 +10,7 @@ namespace Absa.Repo.Automapper
         public DomainToDataProfile()
         {
             CreateMap<Domain.ContactDetail, Data.ContactNumber>();
-            CreateMap<Domain.Contact, Data.Contact>();            
+            CreateMap<Domain.Contact, Data.Contact>().ForMember(c => c.ContactNumber, f => f.Ignore());            
         }
     }
 }
