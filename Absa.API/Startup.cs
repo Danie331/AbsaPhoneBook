@@ -26,6 +26,8 @@ namespace Absa.API
 
             services.AddControllers().AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = null).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
+            services.AddCors(x => x.AddPolicy("LocalhostDebugMode", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
             services.AddAutoMapper(GetType().Assembly, typeof(Repo.DependencyMapper).Assembly);
 
             services.AddSwaggerDocument(settings => settings.Title = "Absa Phonebook Assessment");
@@ -39,6 +41,7 @@ namespace Absa.API
                 app.UseDeveloperExceptionPage();
                 app.UseOpenApi();
                 app.UseSwaggerUi3();
+                app.UseCors("LocalhostDebugMode");
             }
 
             app.UseRouting();
