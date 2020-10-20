@@ -10,5 +10,7 @@ namespace Absa.Services.Specification
         Task<Contact> AddContactAsync(Contact contact);
         Task<ContactDetail> AddContactDetailAsync(int id, ContactDetail contactDetail);
         Task<IEnumerable<Contact>> SearchContactsAsync(ContactSearchData searchData, PagingFilter filter = null);
+        Task<Contact> GetContactAsync(int id);
+        Task<ContactDetail> GetContactDetailAsync(int id);
     }
 }

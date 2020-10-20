@@ -19,6 +19,10 @@ namespace Absa.Services.Core
 
         public Task<ContactDetail> AddContactDetailAsync(int id, ContactDetail contactDetail) => _store.AddAsync(id, contactDetail);
 
+        public Task<Contact> GetContactAsync(int id) => _store.GetContactAsync(id);
+
+        public Task<ContactDetail> GetContactDetailAsync(int id) => _store.GetContactDetailAsync(id);
+
         public Task<IEnumerable<Contact>> SearchContactsAsync(ContactSearchData searchData, PagingFilter filter = null)
         {
             if (!string.IsNullOrWhiteSpace(searchData.SearchName))

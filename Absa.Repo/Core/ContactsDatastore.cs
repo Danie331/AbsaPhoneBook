@@ -156,7 +156,7 @@ namespace Absa.Repo.Core
             return new PhoneBookDirectoryContext(options);
         }
 
-        private async Task<Contact> GetContactAsync(int id)
+        public async Task<Contact> GetContactAsync(int id)
         {
             try
             {
@@ -173,7 +173,7 @@ namespace Absa.Repo.Core
             }
         }
 
-        private async Task<ContactDetail> GetContactDetailAsync(int id)
+        public async Task<ContactDetail> GetContactDetailAsync(int id)
         {
             try
             {
