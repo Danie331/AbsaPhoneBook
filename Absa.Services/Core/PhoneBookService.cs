@@ -2,7 +2,6 @@
 using Absa.Repo.Specification;
 using Absa.Services.Specification;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Absa.Services.Core

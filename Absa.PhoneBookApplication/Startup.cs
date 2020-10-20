@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +27,11 @@ namespace Absa.PhoneBookApplication
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddCors(c =>
+            {
+                c.AddPolicy("LocalhostEndpoint", options => options.WithOrigins("https://localhost:44300"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,14 +52,7 @@ namespace Absa.PhoneBookApplication
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
-            });
+            app.UseCors("LocalhostEndpoint");
 
             app.UseSpa(spa =>
             {
