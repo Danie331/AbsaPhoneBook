@@ -14,7 +14,19 @@ namespace Absa.Services.Core
             _store = store;
         }
 
-        public Task<Contact> AddContactAsync(Contact contact) => _store.AddAsync(contact);
+        public async Task<Contact> AddContactAsync(Contact contact)
+        {
+            var newContact = await _store.AddAsync(contact);
+            if (contact.ContactDetails != null)
+            {
+                foreach (var detail in contact.ContactDetails)
+                {
+                    await AddContactDetailAsync(newContact.Id, detail);
+                }
+            }
+
+            return newContact;
+        }
 
         public Task<ContactDetail> AddContactDetailAsync(int id, ContactDetail contactDetail) => _store.AddAsync(id, contactDetail);
 

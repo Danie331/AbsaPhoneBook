@@ -51,22 +51,12 @@ function App() {
         { title: "Contact Id", field: "Id", hidden: true },
         { title: "First Name", field: "FirstName", readonly: true },
         { title: "Last Name", field: "LastName", readonly: true },
-        { title: "Contact Detail(s)", field: "ContactDetails", readonly: true }
+        { title: "Contact Detail(s)", field: "ContactDetails", readonly: true },
+        { title: " ", field: "Id", hidden: true  }
     ]
     const [data, setData] = useState([]);
     const [iserror, setIserror] = useState(false)
     const [errorMessages, setErrorMessages] = useState([])
-
-    useEffect(() => {
-        api.get("/contacts")
-            .then(res => {
-                var contacts = res.data.Data;
-                setData(contacts)
-            })
-            .catch(error => {
-                console.log("Error")
-            })
-    }, [])
 
     const handleRowAdd = (newData, resolve) => {
         api.post("/contacts", newData)
@@ -100,6 +90,7 @@ function App() {
                             </Alert>
                         }
                     </div>
+                    <div style={{ maxWidth: '100%' }}>
                     <MaterialTable
                         title="Absa PhoneBook Assessment"
                         localization={{
@@ -108,7 +99,24 @@ function App() {
                             }
                         }}
                         columns={columns}
-                        data={data}
+                        data={query =>
+                            new Promise((resolve, reject) => {
+                                let searchField = ''
+                                if (query.search) {
+                                    searchField = query.search.match(/^\d/) ? `SearchNumber=${query.search}` : `SearchName=${query.search}` 
+                                }
+                                let url = `https://localhost:44300/contacts?${searchField}`
+                                fetch(url)
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        resolve({
+                                            data: result.Data,
+                                            page: result.PageNumber,
+                                            totalCount: result.PageSize,
+                                        })
+                                    })
+                            })
+                        }
                         icons={tableIcons}
                         editable={{
                             onRowAdd: (newData) =>
@@ -116,9 +124,10 @@ function App() {
                                     handleRowAdd(newData, resolve)
                                 })
                         }}
-                    />
+                        />
+                    </div>
                 </Grid>
-                <Grid item xs={3}></Grid>
+                <Grid item xs={4}></Grid>
             </Grid>
         </div>
     );

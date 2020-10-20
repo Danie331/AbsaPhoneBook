@@ -101,8 +101,8 @@ namespace Absa.Repo.Core
             try
             {
                 var ctx = await GetDataContext();
-
-                var results = await ctx.ContactNumber.Where(c => c.PhoneNumber.Contains(searchContactDetail))
+                searchContactDetail = searchContactDetail.Replace(" ", "");
+                var results = await ctx.ContactNumber.Where(c => c.PhoneNumber.Replace(" ", "").Contains(searchContactDetail))
                                                      .Include(c => c.Contact)
                                                      .AsNoTracking().ToListAsync();
 
